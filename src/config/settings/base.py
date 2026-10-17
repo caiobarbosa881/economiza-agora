@@ -105,12 +105,37 @@ ASGI_APPLICATION = "config.asgi.application"
 
 
 # Banco de dados
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+def build_databases() -> dict[str, dict[str, object]]:
+    """Monta a configuração de banco conforme o ambiente.
+
+    Se ``POSTGRES_DB`` estiver definido, utiliza PostgreSQL; caso contrário,
+    recorre ao SQLite para permitir rodar o projeto sem o container ligado.
+
+    Returns:
+        Dicionário ``DATABASES`` compatível com o Django.
+    """
+    postgres_db = os.environ.get("POSTGRES_DB")
+    if postgres_db:
+        return {
+            "default": {
+                "ENGINE": "django.db.backends.postgresql",
+                "NAME": postgres_db,
+                "USER": os.environ.get("POSTGRES_USER", "postgres"),
+                "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
+                "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
+                "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+                "CONN_MAX_AGE": 60,
+            }
+        }
+    return {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
+
+
+DATABASES = build_databases()
 
 
 # Autenticação
