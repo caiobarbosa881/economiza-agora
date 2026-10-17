@@ -7,13 +7,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-# Em desenvolvimento a API fica aberta para facilitar a exploração.
-REST_FRAMEWORK = {
-    **REST_FRAMEWORK,  # noqa: F405
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.AllowAny",
-    ],
-}
+# E-mails são exibidos no console durante o desenvolvimento.
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 if env_bool("DJANGO_DEBUG", default=True):
     INTERNAL_IPS = ["127.0.0.1"]
