@@ -7,6 +7,7 @@ Projeto Django (com Django REST Framework) estruturado de forma modular.
 - Python 3.13
 - Django 5.1
 - Django REST Framework
+- SimpleJWT (autenticação JWT)
 - PostgreSQL (via Docker) com fallback para SQLite
 - pytest + pytest-django
 
@@ -26,9 +27,34 @@ Projeto Django (com Django REST Framework) estruturado de forma modular.
 │   │   ├── wsgi.py
 │   │   └── asgi.py
 │   └── apps/
-│       └── core/          # app base (health check, exceções comuns)
+│       ├── core/          # app base (health check, exceções comuns)
+│       └── accounts/      # usuário customizado + autenticação (JWT)
 └── tests/                 # espelha src/ (ver .opencode/skills/testing-guide.md)
 ```
+
+## Autenticação (JWT)
+
+O usuário é autenticado por **e-mail** (modelo customizado `accounts.User`).
+Os tokens usam access + refresh com rotação e blacklist (SimpleJWT).
+
+| Método | Rota | Acesso |
+|---|---|---|
+| POST | `/api/auth/register/` | público |
+| POST | `/api/auth/login/` | público → `{access, refresh, user}` |
+| POST | `/api/auth/refresh/` | público → `{access, refresh, user}` |
+| POST | `/api/auth/logout/` | autenticado (blacklist do refresh) |
+| GET/PATCH | `/api/auth/me/` | autenticado |
+| POST | `/api/auth/password/change/` | autenticado |
+| POST | `/api/auth/password/reset/` | público |
+| POST | `/api/auth/password/reset/confirm/` | público |
+| POST | `/api/auth/email/verify/` | público |
+| POST | `/api/auth/email/resend/` | autenticado |
+
+Requisições autenticadas usam o header `Authorization: Bearer <access>`.
+
+Em desenvolvimento os e-mails (verificação e reset) são exibidos no
+**console** (`EMAIL_BACKEND=console`). A permissão `accounts.IsEmailVerified`
+está disponível para proteger endpoints que exijam e-mail confirmado.
 
 ## Como rodar
 
