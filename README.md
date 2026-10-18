@@ -99,8 +99,19 @@ docker compose down -v       # remove o volume (apaga os dados)
 pytest
 ```
 
-Os testes usam o banco configurado no `.env` (PostgreSQL) ou SQLite como
-fallback.
+Os testes rodam com `config.settings.test`: **SQLite em memória, hermético e
+sem depender do Docker**. O `pytest.ini` já habilita cobertura
+(`pytest-cov`) com gate mínimo de 85% e falha a execução abaixo disso.
+
+Para validar contra **PostgreSQL real** (ex.: CI), rode com as variáveis
+`POSTGRESS_*`/`POSTGRES_*` definidas e:
+
+```powershell
+pytest --ds=config.settings.development
+```
+
+Relatório de cobertura: `pytest --cov-report=term-missing` (já inclusa no
+`addopts`). Veja a política de testes em `.opencode/specs/testing_spec.md`.
 
 ## Configuração
 

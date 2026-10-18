@@ -38,6 +38,28 @@ def test_verificacao_token_invalido(api_client: APIClient, user: User) -> None:
 
 
 @pytest.mark.django_db
+def test_verificacao_uid_invalido(api_client: APIClient) -> None:
+    """UID que não decodifica é rejeitado no campo ``uid``."""
+    response = api_client.post(VERIFY_URL, {"uid": "nao-e-um-uid", "token": "x"})
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "uid" in response.json()
+
+
+@pytest.mark.django_db
+def test_verificacao_quando_ja_verificado(
+    verified_client: APIClient, verified_user: User
+) -> None:
+    """E-mail já verificado é rejeitado antes da checagem do token."""
+    uid = urlsafe_base64_encode(force_bytes(verified_user.pk))
+
+    response = verified_client.post(VERIFY_URL, {"uid": uid, "token": "qualquer"})
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "Este e-mail já foi verificado." in response.json()["detail"]
+
+
+@pytest.mark.django_db
 def test_reenvio_envia_email(auth_client: APIClient, user: User, mailoutbox) -> None:
     """Reenvio para usuário não verificado dispara o e-mail."""
     response = auth_client.post(RESEND_URL)
