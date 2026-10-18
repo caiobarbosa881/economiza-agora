@@ -43,6 +43,7 @@ def test_registro_email_duplicado(api_client: APIClient, user: User) -> None:
     response = api_client.post(REGISTER_URL, payload)
 
     assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "email" in response.json()
 
 
 @pytest.mark.django_db

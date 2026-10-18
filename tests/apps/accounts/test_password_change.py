@@ -56,3 +56,19 @@ def test_troca_senha_exige_autenticacao(api_client: APIClient) -> None:
     )
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+@pytest.mark.django_db
+def test_troca_senha_confirmacao_divergente(auth_client: APIClient) -> None:
+    """Nova senha e confirmação diferentes são rejeitadas."""
+    response = auth_client.post(
+        CHANGE_URL,
+        {
+            "current_password": PASSWORD,
+            "new_password": "NovaSenhaForte123",
+            "new_password_confirm": "OutraSenha123",
+        },
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "new_password_confirm" in response.json()

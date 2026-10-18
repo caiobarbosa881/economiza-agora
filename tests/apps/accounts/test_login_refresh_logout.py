@@ -72,3 +72,21 @@ def test_logout_exige_autenticacao(api_client: APIClient) -> None:
     response = api_client.post(LOGOUT_URL, {"refresh": "token"})
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+@pytest.mark.django_db
+def test_logout_refresh_invalido(auth_client: APIClient) -> None:
+    """Refresh token malformado/inválido devolve 400 com detail."""
+    response = auth_client.post(LOGOUT_URL, {"refresh": "token-invalido"})
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json()["detail"] == "Token inválido ou já expirado."
+
+
+@pytest.mark.django_db
+def test_logout_sem_campo_refresh(auth_client: APIClient) -> None:
+    """Logout sem o campo ``refresh`` falha na validação do serializer."""
+    response = auth_client.post(LOGOUT_URL, {})
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert "refresh" in response.json()
