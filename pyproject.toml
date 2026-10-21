@@ -1,0 +1,22 @@
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+src = ["src", "tests"]
+extend-exclude = ["**/migrations/*"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # erros de pycodestyle
+    "F",   # erros de pyflakes
+    "W",   # avisos de pycodestyle
+    "I",   # ordenação de imports (isort)
+    "B",   # bugbear (armadilhas comuns)
+    "UP",  # upgrades modernos de Python
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["apps", "config"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
