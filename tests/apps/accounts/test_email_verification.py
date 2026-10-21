@@ -47,9 +47,7 @@ def test_verificacao_uid_invalido(api_client: APIClient) -> None:
 
 
 @pytest.mark.django_db
-def test_verificacao_quando_ja_verificado(
-    verified_client: APIClient, verified_user: User
-) -> None:
+def test_verificacao_quando_ja_verificado(verified_client: APIClient, verified_user: User) -> None:
     """E-mail já verificado é rejeitado antes da checagem do token."""
     uid = urlsafe_base64_encode(force_bytes(verified_user.pk))
 
@@ -69,9 +67,7 @@ def test_reenvio_envia_email(auth_client: APIClient, user: User, mailoutbox) -> 
 
 
 @pytest.mark.django_db
-def test_reenvio_quando_ja_verificado(
-    verified_client: APIClient, mailoutbox
-) -> None:
+def test_reenvio_quando_ja_verificado(verified_client: APIClient, mailoutbox) -> None:
     """Reenvio para e-mail já verificado não dispara novo e-mail."""
     response = verified_client.post(RESEND_URL)
 

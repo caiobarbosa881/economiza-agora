@@ -31,9 +31,7 @@ def test_jornada_cadastro_login_perfil_logout(api_client: APIClient, mailoutbox)
     assert registro.status_code == status.HTTP_201_CREATED
     assert len(mailoutbox) == 1
 
-    login = api_client.post(
-        LOGIN_URL, {"email": "jornada@example.com", "password": PASSWORD}
-    )
+    login = api_client.post(LOGIN_URL, {"email": "jornada@example.com", "password": PASSWORD})
     assert login.status_code == status.HTTP_200_OK
     tokens = login.json()
     api_client.credentials(HTTP_AUTHORIZATION=f"Bearer {tokens['access']}")

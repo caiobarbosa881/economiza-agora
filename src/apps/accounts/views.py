@@ -102,9 +102,7 @@ class PasswordChangeView(APIView):
 
     def post(self, request: Request) -> Response:
         """Valida e persiste a nova senha."""
-        serializer = PasswordChangeSerializer(
-            data=request.data, context={"request": request}
-        )
+        serializer = PasswordChangeSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response({"detail": "Senha alterada com sucesso."})
@@ -120,9 +118,7 @@ class PasswordResetRequestView(APIView):
         """Envia o e-mail se o usuário existir, sem revelar isso na resposta."""
         serializer = PasswordResetRequestSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        user = User.objects.filter(
-            email__iexact=serializer.validated_data["email"]
-        ).first()
+        user = User.objects.filter(email__iexact=serializer.validated_data["email"]).first()
         if user is not None:
             try:
                 send_password_reset_email(user)

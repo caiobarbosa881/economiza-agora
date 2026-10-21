@@ -114,9 +114,7 @@ def test_password_reset_confirm_rejeita_uid_invalido(db) -> None:
 @pytest.mark.django_db
 def test_email_verification_rejeita_uid_invalido(db) -> None:
     """UID inválido também é rejeitado na verificação de e-mail."""
-    serializer = EmailVerificationSerializer(
-        data={"uid": "nao-e-um-uid", "token": "qualquer"}
-    )
+    serializer = EmailVerificationSerializer(data={"uid": "nao-e-um-uid", "token": "qualquer"})
 
     assert serializer.is_valid() is False
     assert "uid" in serializer.errors
@@ -126,9 +124,7 @@ def test_email_verification_rejeita_uid_invalido(db) -> None:
 def test_email_verification_rejeita_ja_verificado(verified_user: User) -> None:
     """E-mail já verificado é rejeitado antes da checagem do token."""
     uid = urlsafe_base64_encode(force_bytes(verified_user.pk))
-    serializer = EmailVerificationSerializer(
-        data={"uid": uid, "token": "qualquer"}
-    )
+    serializer = EmailVerificationSerializer(data={"uid": uid, "token": "qualquer"})
 
     assert serializer.is_valid() is False
     assert "detail" in serializer.errors

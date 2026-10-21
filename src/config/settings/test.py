@@ -11,6 +11,10 @@ from .development import *  # noqa: F401,F403
 
 DEBUG = False
 
+# Chave fixa e não secreta: a suíte não pode depender de ``.env`` (ex.: CI).
+SECRET_KEY = "test-only-insecure-secret-key-not-for-production-use"
+SIMPLE_JWT = {**SIMPLE_JWT, "SIGNING_KEY": SECRET_KEY}  # noqa: F405
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",

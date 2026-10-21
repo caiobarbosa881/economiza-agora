@@ -16,9 +16,7 @@ PASSWORD = "SenhaForte123"
 @pytest.mark.django_db
 def test_login_retorna_tokens_e_usuario(api_client: APIClient, user: User) -> None:
     """Login válido devolve access, refresh e os dados do usuário."""
-    response = api_client.post(
-        LOGIN_URL, {"email": user.email, "password": PASSWORD}
-    )
+    response = api_client.post(LOGIN_URL, {"email": user.email, "password": PASSWORD})
 
     assert response.status_code == status.HTTP_200_OK
     body = response.json()
@@ -30,9 +28,7 @@ def test_login_retorna_tokens_e_usuario(api_client: APIClient, user: User) -> No
 @pytest.mark.django_db
 def test_login_senha_incorreta(api_client: APIClient, user: User) -> None:
     """Login com senha errada é rejeitado."""
-    response = api_client.post(
-        LOGIN_URL, {"email": user.email, "password": "senha-errada"}
-    )
+    response = api_client.post(LOGIN_URL, {"email": user.email, "password": "senha-errada"})
 
     assert response.status_code == status.HTTP_401_UNAUTHORIZED
 

@@ -15,8 +15,4 @@ class IsEmailVerified(BasePermission):
     def has_permission(self, request: Request, view: APIView) -> bool:
         """Verifica autenticação e o campo ``is_email_verified``."""
         user = request.user
-        return bool(
-            isinstance(user, User)
-            and user.is_authenticated
-            and user.is_email_verified
-        )
+        return bool(isinstance(user, User) and user.is_authenticated and user.is_email_verified)

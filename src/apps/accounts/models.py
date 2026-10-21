@@ -12,9 +12,7 @@ class UserManager(BaseUserManager["User"]):
 
     use_in_migrations = True
 
-    def _create_user(
-        self, email: str, password: str | None, **extra_fields: Any
-    ) -> "User":
+    def _create_user(self, email: str, password: str | None, **extra_fields: Any) -> "User":
         """Cria e persiste um usuário com o e-mail normalizado.
 
         Args:
@@ -36,9 +34,7 @@ class UserManager(BaseUserManager["User"]):
         user.save(using=self._db)
         return user
 
-    def create_user(
-        self, email: str, password: str | None = None, **extra_fields: Any
-    ) -> "User":
+    def create_user(self, email: str, password: str | None = None, **extra_fields: Any) -> "User":
         """Cria um usuário comum.
 
         Args:
