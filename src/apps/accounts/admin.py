@@ -54,9 +54,7 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
 
-    def get_readonly_fields(
-        self, request: HttpRequest, obj: Any = None
-    ) -> tuple[str, ...]:
+    def get_readonly_fields(self, request: HttpRequest, obj: Any = None) -> tuple[str, ...]:
         """Impede a alteração das datas após a criação."""
         if obj is not None:
             return self.readonly_fields

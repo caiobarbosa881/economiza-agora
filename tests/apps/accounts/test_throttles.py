@@ -13,9 +13,7 @@ PASSWORD = "SenhaForte123"
 
 
 @pytest.mark.django_db
-def test_login_bloqueia_apos_exceder_rate(
-    api_client: APIClient, user: User, monkeypatch
-) -> None:
+def test_login_bloqueia_apos_exceder_rate(api_client: APIClient, user: User, monkeypatch) -> None:
     """Após exceder a rate de login, o IP recebe 429.
 
     O DRF amarra ``THROTTLE_RATES`` na importação do módulo de throttling,

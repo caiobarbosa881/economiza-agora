@@ -7,8 +7,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer, TokenRefreshSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from apps.accounts.emails import send_verification_email
@@ -34,9 +33,7 @@ def _decode_uid(uid: str) -> User:
         user_id = force_str(urlsafe_base64_decode(uid))
         return User.objects.get(pk=user_id)
     except (TypeError, ValueError, OverflowError, User.DoesNotExist) as exc:
-        raise serializers.ValidationError(
-            {"uid": "Identificador inválido."}
-        ) from exc
+        raise serializers.ValidationError({"uid": "Identificador inválido."}) from exc
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -86,9 +83,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         """Valida a confirmação e a força da senha."""
         if attrs["password"] != attrs["password_confirm"]:
-            raise serializers.ValidationError(
-                {"password_confirm": "As senhas não coincidem."}
-            )
+            raise serializers.ValidationError({"password_confirm": "As senhas não coincidem."})
         validate_password(attrs["password"])
         return attrs
 
@@ -163,9 +158,7 @@ class PasswordChangeSerializer(serializers.Serializer):
         """Valida a confirmação e a força da nova senha."""
         user = cast(User, self.context["request"].user)
         if attrs["new_password"] != attrs["new_password_confirm"]:
-            raise serializers.ValidationError(
-                {"new_password_confirm": "As senhas não coincidem."}
-            )
+            raise serializers.ValidationError({"new_password_confirm": "As senhas não coincidem."})
         validate_password(attrs["new_password"], user)
         return attrs
 
@@ -199,13 +192,9 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         """Valida o token e as novas senhas."""
         user = _decode_uid(attrs["uid"])
         if not default_token_generator.check_token(user, attrs["token"]):
-            raise serializers.ValidationError(
-                {"token": "Token inválido ou expirado."}
-            )
+            raise serializers.ValidationError({"token": "Token inválido ou expirado."})
         if attrs["new_password"] != attrs["new_password_confirm"]:
-            raise serializers.ValidationError(
-                {"new_password_confirm": "As senhas não coincidem."}
-            )
+            raise serializers.ValidationError({"new_password_confirm": "As senhas não coincidem."})
         validate_password(attrs["new_password"], user)
         self.user = user
         return attrs
@@ -228,13 +217,9 @@ class EmailVerificationSerializer(serializers.Serializer):
         """Valida o token de verificação de e-mail."""
         user = _decode_uid(attrs["uid"])
         if user.is_email_verified:
-            raise serializers.ValidationError(
-                {"detail": "Este e-mail já foi verificado."}
-            )
+            raise serializers.ValidationError({"detail": "Este e-mail já foi verificado."})
         if not email_verification_token.check_token(user, attrs["token"]):
-            raise serializers.ValidationError(
-                {"token": "Token inválido ou expirado."}
-            )
+            raise serializers.ValidationError({"token": "Token inválido ou expirado."})
         self.user = user
         return attrs
 
