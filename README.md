@@ -8,6 +8,7 @@ Projeto Django (com Django REST Framework) estruturado de forma modular.
 - Django 5.1
 - Django REST Framework
 - SimpleJWT (autenticação JWT)
+- drf-spectacular (OpenAPI/Swagger) e django-cors-headers
 - PostgreSQL (via Docker) com fallback para SQLite
 - pytest + pytest-django
 
@@ -68,6 +69,21 @@ python manage.py runserver
 
 Health check: `GET http://127.0.0.1:8000/api/health/`
 
+## Documentação da API
+
+- Swagger UI: `http://127.0.0.1:8000/api/docs/`
+- Schema OpenAPI 3: `http://127.0.0.1:8000/api/schema/`
+
+Em desenvolvimento a documentação é pública; em produção só usuários staff
+(`is_staff`) têm acesso. Endpoints novos baseados em `APIView` devem declarar
+request/response com `@extend_schema` — o CI valida o schema com
+`--fail-on-warn`.
+
+## CORS
+
+Só as origens em `CORS_ALLOWED_ORIGINS` (separadas por vírgula) podem chamar a
+API pelo navegador. Sem a variável, vale apenas `FRONTEND_URL`.
+
 ## Banco de dados (Docker)
 
 O projeto usa PostgreSQL em desenvolvimento via Docker Compose. Inicie o
@@ -105,11 +121,16 @@ pre-commit run --all-files   # aplica nos arquivos existentes
 ```
 
 O workflow de CI (GitHub Actions, `.github/workflows/ci.yml`) roda em cada
-push/PR: `ruff check`, `ruff format --check` e a suíte `pytest`.
+push/PR: `ruff check`, `ruff format --check`, validação do schema OpenAPI e a
+suíte `pytest`.
+
+`requirements.txt` contém só as dependências de runtime; ferramentas de teste
+e lint (pytest, ruff, pre-commit) ficam em `requirements-dev.txt`.
 
 ## Testes
 
 ```powershell
+pip install -r requirements-dev.txt
 pytest
 ```
 

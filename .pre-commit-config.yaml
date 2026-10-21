@@ -1,13 +1,22 @@
 repos:
+  # Os hooks abaixo rodam via ``python -m`` em vez dos launchers ``.exe``
+  # gerados pelo pip: no Windows com o Python da Microsoft Store esses
+  # launchers travam indefinidamente. O comportamento é o mesmo do entry padrão.
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+        entry: python -m pre_commit_hooks.trailing_whitespace_fixer
       - id: end-of-file-fixer
+        entry: python -m pre_commit_hooks.end_of_file_fixer
       - id: check-yaml
+        entry: python -m pre_commit_hooks.check_yaml
       - id: check-toml
+        entry: python -m pre_commit_hooks.check_toml
       - id: check-added-large-files
+        entry: python -m pre_commit_hooks.check_added_large_files
       - id: check-merge-conflict
+        entry: python -m pre_commit_hooks.check_merge_conflict
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.17.1

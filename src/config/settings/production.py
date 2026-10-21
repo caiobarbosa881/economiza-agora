@@ -24,6 +24,12 @@ REST_FRAMEWORK = {
     ],
 }
 
+# Em produção o schema e a documentação da API ficam restritos à equipe.
+SPECTACULAR_SETTINGS = {
+    **SPECTACULAR_SETTINGS,  # noqa: F405
+    "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+}
+
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
