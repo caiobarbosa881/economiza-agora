@@ -93,6 +93,20 @@ docker compose down          # mantém os dados
 docker compose down -v       # remove o volume (apaga os dados)
 ```
 
+## Desenvolvimento
+
+O projeto usa **Ruff** para lint e formatação (config em `pyproject.toml`) e
+**pre-commit** para aplicar os hooks antes de cada commit:
+
+```powershell
+pip install -r requirements-dev.txt
+pre-commit install
+pre-commit run --all-files   # aplica nos arquivos existentes
+```
+
+O workflow de CI (GitHub Actions, `.github/workflows/ci.yml`) roda em cada
+push/PR: `ruff check`, `ruff format --check` e a suíte `pytest`.
+
 ## Testes
 
 ```powershell
