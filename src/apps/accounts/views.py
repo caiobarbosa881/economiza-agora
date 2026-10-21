@@ -2,6 +2,7 @@
 
 import logging
 
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.request import Request
@@ -30,6 +31,7 @@ from apps.accounts.throttles import (
     PasswordResetRateThrottle,
     RegisterRateThrottle,
 )
+from apps.core.serializers import DetailSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +64,10 @@ class LogoutView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=LogoutSerializer,
+        responses={200: DetailSerializer, 400: DetailSerializer},
+    )
     def post(self, request: Request) -> Response:
         """Adiciona o refresh token à blacklist."""
         serializer = LogoutSerializer(data=request.data)
@@ -100,6 +106,7 @@ class PasswordChangeView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=PasswordChangeSerializer, responses={200: DetailSerializer})
     def post(self, request: Request) -> Response:
         """Valida e persiste a nova senha."""
         serializer = PasswordChangeSerializer(data=request.data, context={"request": request})
@@ -114,6 +121,7 @@ class PasswordResetRequestView(APIView):
     permission_classes = [AllowAny]
     throttle_classes = [PasswordResetRateThrottle]
 
+    @extend_schema(request=PasswordResetRequestSerializer, responses={200: DetailSerializer})
     def post(self, request: Request) -> Response:
         """Envia o e-mail se o usuário existir, sem revelar isso na resposta."""
         serializer = PasswordResetRequestSerializer(data=request.data)
@@ -135,6 +143,7 @@ class PasswordResetConfirmView(APIView):
 
     permission_classes = [AllowAny]
 
+    @extend_schema(request=PasswordResetConfirmSerializer, responses={200: DetailSerializer})
     def post(self, request: Request) -> Response:
         """Valida o token e define a nova senha."""
         serializer = PasswordResetConfirmSerializer(data=request.data)
@@ -148,6 +157,7 @@ class EmailVerificationView(APIView):
 
     permission_classes = [AllowAny]
 
+    @extend_schema(request=EmailVerificationSerializer, responses={200: DetailSerializer})
     def post(self, request: Request) -> Response:
         """Marca o e-mail como verificado."""
         serializer = EmailVerificationSerializer(data=request.data)
@@ -161,6 +171,7 @@ class EmailResendView(APIView):
 
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(request=None, responses={200: DetailSerializer})
     def post(self, request: Request) -> Response:
         """Reenvia o e-mail se ainda não estiver verificado."""
         if request.user.is_email_verified:

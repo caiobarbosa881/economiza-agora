@@ -39,6 +39,12 @@ def test_production_restringe_renderers(production: ModuleType) -> None:
     assert renderers == ["rest_framework.renderers.JSONRenderer"]
 
 
+def test_production_restringe_documentacao_a_equipe(production: ModuleType) -> None:
+    """Em produção o schema/Swagger só é servido para usuários staff."""
+    permissions = production.SPECTACULAR_SETTINGS["SERVE_PERMISSIONS"]
+    assert permissions == ["rest_framework.permissions.IsAdminUser"]
+
+
 def test_production_exige_secret_key(monkeypatch: pytest.MonkeyPatch) -> None:
     """Sem DJANGO_SECRET_KEY, importar as settings de produção falha."""
     from config.settings import base
