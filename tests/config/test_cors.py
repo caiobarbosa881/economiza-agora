@@ -24,6 +24,7 @@ def test_preflight_origem_permitida_recebe_cabecalhos_cors(api_client: APIClient
     assert response["Access-Control-Allow-Origin"] == ORIGEM_FRONTEND
 
 
+@pytest.mark.django_db
 def test_origem_nao_permitida_nao_recebe_cabecalho_cors(api_client: APIClient) -> None:
     """Origem fora da lista não recebe o cabeçalho e o navegador bloqueia."""
     response = api_client.get("/api/health/", HTTP_ORIGIN="https://malicioso.example.com")

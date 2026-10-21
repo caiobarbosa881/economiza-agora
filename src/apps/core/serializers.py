@@ -17,3 +17,4 @@ class HealthCheckSerializer(serializers.Serializer):
     """Resposta do health check."""
 
     status = serializers.CharField()
+    database = serializers.CharField()

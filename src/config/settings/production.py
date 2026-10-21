@@ -5,7 +5,7 @@ restritivas de segurança.
 """
 
 from .base import *  # noqa: F401,F403
-from .base import SECRET_KEY, env_list
+from .base import SECRET_KEY, env_bool, env_list
 
 DEBUG = False
 
@@ -29,6 +29,13 @@ SPECTACULAR_SETTINGS = {
     **SPECTACULAR_SETTINGS,  # noqa: F405
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
 }
+
+# Atrás de um proxy/load balancer que termina o TLS, o Django só sabe que a
+# requisição original era HTTPS por este cabeçalho. Ative apenas se o proxy
+# sempre sobrescrever o X-Forwarded-Proto; caso contrário o cliente poderia
+# forjá-lo.
+if env_bool("DJANGO_BEHIND_PROXY", default=False):
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
