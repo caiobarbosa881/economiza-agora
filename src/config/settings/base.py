@@ -220,6 +220,8 @@ REST_FRAMEWORK = {
         "login": os.environ.get("THROTTLE_LOGIN", "10/min"),
         "register": os.environ.get("THROTTLE_REGISTER", "10/hour"),
         "password_reset": os.environ.get("THROTTLE_PASSWORD_RESET", "5/hour"),
+        "email_resend": os.environ.get("THROTTLE_EMAIL_RESEND", "3/hour"),
+        "token_confirm": os.environ.get("THROTTLE_TOKEN_CONFIRM", "20/hour"),
     },
 }
 
@@ -250,6 +252,35 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
     "SERVE_PERMISSIONS": ["rest_framework.permissions.AllowAny"],
+}
+
+
+# Logging: tudo vai para o console (stdout), já sem dados sensíveis.
+LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO").upper()
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "filters": {
+        "sensitive_data": {"()": "apps.core.log_filters.SensitiveDataFilter"},
+    },
+    "formatters": {
+        "default": {
+            "format": "{asctime} {levelname} {name}: {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "default",
+            "filters": ["sensitive_data"],
+        },
+    },
+    "root": {"handlers": ["console"], "level": LOG_LEVEL},
+    "loggers": {
+        "django": {"handlers": ["console"], "level": LOG_LEVEL, "propagate": False},
+    },
 }
 
 

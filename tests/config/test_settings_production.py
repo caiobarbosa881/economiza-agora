@@ -16,6 +16,7 @@ def production(monkeypatch: pytest.MonkeyPatch) -> ModuleType:
     """
     from config.settings import base
 
+    monkeypatch.delenv("DJANGO_BEHIND_PROXY", raising=False)
     monkeypatch.setattr(base, "SECRET_KEY", "prod-test-secret-key")
     monkeypatch.delitem(sys.modules, "config.settings.production", raising=False)
     return importlib.import_module("config.settings.production")
@@ -54,3 +55,23 @@ def test_production_exige_secret_key(monkeypatch: pytest.MonkeyPatch) -> None:
 
     with pytest.raises(RuntimeError, match="DJANGO_SECRET_KEY"):
         importlib.import_module("config.settings.production")
+
+
+def test_production_sem_proxy_nao_confia_em_x_forwarded_proto(production: ModuleType) -> None:
+    """Por padrão o cabeçalho de proxy não é aceito (evita HTTPS forjado)."""
+    assert not hasattr(production, "SECURE_PROXY_SSL_HEADER")
+
+
+def test_production_atras_de_proxy_confia_em_x_forwarded_proto(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Com DJANGO_BEHIND_PROXY, o Django reconhece HTTPS vindo do proxy."""
+    from config.settings import base
+
+    monkeypatch.setenv("DJANGO_BEHIND_PROXY", "True")
+    monkeypatch.setattr(base, "SECRET_KEY", "prod-test-secret-key")
+    monkeypatch.delitem(sys.modules, "config.settings.production", raising=False)
+
+    production = importlib.import_module("config.settings.production")
+
+    assert production.SECURE_PROXY_SSL_HEADER == ("HTTP_X_FORWARDED_PROTO", "https")

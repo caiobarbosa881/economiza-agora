@@ -27,9 +27,11 @@ from apps.accounts.serializers import (
     UserUpdateSerializer,
 )
 from apps.accounts.throttles import (
+    EmailResendRateThrottle,
     LoginRateThrottle,
     PasswordResetRateThrottle,
     RegisterRateThrottle,
+    TokenConfirmRateThrottle,
 )
 from apps.core.serializers import DetailSerializer
 
@@ -142,6 +144,7 @@ class PasswordResetConfirmView(APIView):
     """Conclui a redefinição de senha com uid e token."""
 
     permission_classes = [AllowAny]
+    throttle_classes = [TokenConfirmRateThrottle]
 
     @extend_schema(request=PasswordResetConfirmSerializer, responses={200: DetailSerializer})
     def post(self, request: Request) -> Response:
@@ -156,6 +159,7 @@ class EmailVerificationView(APIView):
     """Confirma o e-mail a partir de uid e token."""
 
     permission_classes = [AllowAny]
+    throttle_classes = [TokenConfirmRateThrottle]
 
     @extend_schema(request=EmailVerificationSerializer, responses={200: DetailSerializer})
     def post(self, request: Request) -> Response:
@@ -170,6 +174,7 @@ class EmailResendView(APIView):
     """Reenvia o e-mail de verificação para o usuário autenticado."""
 
     permission_classes = [IsAuthenticated]
+    throttle_classes = [EmailResendRateThrottle]
 
     @extend_schema(request=None, responses={200: DetailSerializer})
     def post(self, request: Request) -> Response:
