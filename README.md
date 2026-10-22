@@ -69,6 +69,19 @@ está disponível para proteger endpoints que exijam e-mail confirmado.
 
 Ajustáveis pelas variáveis `THROTTLE_*` do `.env`.
 
+## Perfil financeiro
+
+Cada usuário tem um perfil financeiro (criado zerado no primeiro acesso) com a
+renda mensal e os gastos fixos por categoria. A resposta inclui `total_expenses`
+e `balance` (renda − gastos; negativo indica déficit), calculados no servidor.
+
+| Método | Rota | Acesso |
+|---|---|---|
+| GET/PATCH | `/api/finances/profile/` | autenticado |
+
+Campos editáveis (valores em reais, não negativos): `monthly_income`, `housing`,
+`utilities`, `food`, `transport`, `phone`, `internet`, `subscriptions`, `other`.
+
 ## Como rodar
 
 ```powershell
